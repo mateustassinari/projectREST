@@ -16,7 +16,7 @@ version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 springBoot {
-    mainClassName = "br.com.mateus.projetoREST.ProjetoRESTApplication"
+    mainClassName = "br.com.mateus.projectREST.ProjectRESTApplication"
 }
 
 repositories {
