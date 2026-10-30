@@ -8,7 +8,7 @@ class UserService {
 
     fun authenticated(): UserSS? {
         return try {
-            SecurityContextHolder.getContext().authentication.principal as UserSS
+            SecurityContextHolder.getContext().authentication?.principal as UserSS
         } catch (e: Exception) {
             null
         }

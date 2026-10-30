@@ -32,10 +32,10 @@ class NewPassword {
                 lReturn += " "
             }
             if (lWord.isNotEmpty()) {
-                lReturn += palav[i].substring(0, 1).toUpperCase() + palav[i].substring(1)
+                lReturn += palav[i].substring(0, 1).uppercase() + palav[i].substring(1)
             } else {
                 if (palav[i].length > 1) {
-                    lReturn += palav[i].substring(0, 1).toUpperCase()
+                    lReturn += palav[i].substring(0, 1).uppercase()
                 }
             }
         }

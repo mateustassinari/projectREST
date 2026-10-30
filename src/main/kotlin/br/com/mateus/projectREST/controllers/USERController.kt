@@ -7,9 +7,10 @@ import br.com.mateus.projectREST.security.UserSS
 import br.com.mateus.projectREST.services.USERService
 import br.com.mateus.projectREST.services.impl.UserService
 import br.com.mateus.projectREST.utils.CPFUtil
-import io.swagger.annotations.ApiOperation
-import io.swagger.annotations.ApiResponse
-import io.swagger.annotations.ApiResponses
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.AuthorizationServiceException
@@ -18,19 +19,19 @@ import org.springframework.web.client.RestTemplate
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.net.URI
 import java.util.*
-import javax.validation.Valid
 
 
 @RestController
 @RequestMapping("/user")
 class USERController(val userService: USERService) {
 
-    @ApiOperation("Return User by login")
-    @ApiResponses(value = [ApiResponse(code = 200, message = "Successful request"),
-        ApiResponse(code = 401, message = "Not authorized"),
-        ApiResponse(code = 404, message = "Not found"),
-        ApiResponse(code = 400, message = "Parameter not informed"),
-        ApiResponse(code = 500, message = "Unexpected error")] )
+    @Operation(summary = "Return User by login")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "Successful request"),
+        ApiResponse(responseCode = "401", description = "Not authorized"),
+        ApiResponse(responseCode = "404", description = "Not found"),
+        ApiResponse(responseCode = "400", description = "Parameter not informed"),
+        ApiResponse(responseCode = "500", description = "Unexpected error")])
     @RequestMapping(method = [RequestMethod.GET])
     fun findUser(@RequestParam(value="login") login: String?): ResponseEntity<USERDto> {
         val response: USERDto?
@@ -55,12 +56,13 @@ class USERController(val userService: USERService) {
         return ResponseEntity.ok(response!!)
     }
 
-    @ApiOperation("Return User by id")
-    @ApiResponses(value = [ApiResponse(code = 200, message = "Successful request"),
-        ApiResponse(code = 401, message = "Not authorized"),
-        ApiResponse(code = 404, message = "Not found"),
-        ApiResponse(code = 400, message = "Parameter not informed"),
-        ApiResponse(code = 500, message = "Unexpected error")] )
+    @Operation(summary = "Return User by id")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "Successful request"),
+        ApiResponse(responseCode = "401", description = "Not authorized"),
+        ApiResponse(responseCode = "404", description = "Not found"),
+        ApiResponse(responseCode = "400", description = "Parameter not informed"),
+        ApiResponse(responseCode = "500", description = "Unexpected error")])
     @RequestMapping(value = ["/{id}"], method = [RequestMethod.GET])
     fun findUserId(@PathVariable id: Int?): ResponseEntity<USERDto> {
         val response: USERDto?
@@ -74,11 +76,12 @@ class USERController(val userService: USERService) {
         return ResponseEntity.ok(response!!)
     }
 
-    @ApiOperation("Register a new User")
-    @ApiResponses(value = [ApiResponse(code = 201, message = "User Created - New resource URI in header"),
-        ApiResponse(code = 409, message = "User already registered"),
-        ApiResponse(code = 400, message = "Lack of information/poorly formatted request"),
-        ApiResponse(code = 500, message = "Unexpected error")] )
+    @Operation(summary = "Register a new User")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "201", description = "User Created - New resource URI in header"),
+        ApiResponse(responseCode = "409", description = "User already registered"),
+        ApiResponse(responseCode = "400", description = "Lack of information/poorly formatted request"),
+        ApiResponse(responseCode = "500", description = "Unexpected error")])
     @RequestMapping(method = [RequestMethod.POST])
     fun addUser(@Valid @RequestBody userDto: USERInsDto): ResponseEntity<Response<ReturnUSERDto>> {
         val response: Response<ReturnUSERDto> = Response()
@@ -121,11 +124,12 @@ class USERController(val userService: USERService) {
         return ResponseEntity.created(uri).body(response)
     }
 
-    @ApiOperation("Update a User")
-    @ApiResponses(value = [ApiResponse(code = 204, message = "Updated User"),
-        ApiResponse(code = 401, message = "Not authorized"),
-        ApiResponse(code = 400, message = "Lack of information/poorly formatted request"),
-        ApiResponse(code = 500, message = "Unexpected error")] )
+    @Operation(summary = "Update a User")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "204", description = "Updated User"),
+        ApiResponse(responseCode = "401", description = "Not authorized"),
+        ApiResponse(responseCode = "400", description = "Lack of information/poorly formatted request"),
+        ApiResponse(responseCode = "500", description = "Unexpected error")])
     @RequestMapping(value = ["/{id}"], method = [RequestMethod.PUT])
     fun updateUser(@Valid @RequestBody userDto: USERUpdDto, @PathVariable id: Int?): ResponseEntity<Response<Void>> {
         val response: Response<Void> = Response()
@@ -141,11 +145,12 @@ class USERController(val userService: USERService) {
         return ResponseEntity.noContent().build()
     }
 
-    @ApiOperation("Delete a User")
-    @ApiResponses(value = [ApiResponse(code = 200, message = "Deleted User"),
-        ApiResponse(code = 401, message = "Not authorized"),
-        ApiResponse(code = 400, message = "Lack of information/poorly formatted request"),
-        ApiResponse(code = 500, message = "Unexpected error")] )
+    @Operation(summary = "Delete a User")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "Deleted User"),
+        ApiResponse(responseCode = "401", description = "Not authorized"),
+        ApiResponse(responseCode = "400", description = "Lack of information/poorly formatted request"),
+        ApiResponse(responseCode = "500", description = "Unexpected error")])
     @RequestMapping(value = ["/{id}"], method = [RequestMethod.DELETE])
     fun delUser(@PathVariable id: Int?): ResponseEntity<Response<Void>> {
 
@@ -158,20 +163,18 @@ class USERController(val userService: USERService) {
         return ResponseEntity.ok().build()
     }
 
-    @ApiOperation("Get address through zip code")
-    @ApiResponses(value = [ApiResponse(code = 200, message = "Successful request"),
-        ApiResponse(code = 400, message = "Lack of information or invalid zip code"),
-        ApiResponse(code = 500, message = "Unexpected error")] )
+    @Operation(summary = "Get address through zip code")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "Successful request"),
+        ApiResponse(responseCode = "400", description = "Lack of information or invalid zip code"),
+        ApiResponse(responseCode = "500", description = "Unexpected error")])
     @RequestMapping(value = ["/cep/{cep}"],method = [RequestMethod.GET])
-    fun verifyCEP(@PathVariable cep: String?): ResponseEntity<CEPDto?>? {
+    fun verifyCEP(@PathVariable cep: String?): ResponseEntity<CEPDto>? {
         val restTemplate = RestTemplate()
         val url = "http://viacep.com.br/ws/$cep/json/"
         val end: CEPDto? = restTemplate
             .getForObject(url, CEPDto::class.java)
 
         return end?.let { ResponseEntity.ok(it) }
-
     }
-
-
 }

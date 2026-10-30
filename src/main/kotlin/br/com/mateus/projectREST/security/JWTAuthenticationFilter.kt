@@ -5,7 +5,7 @@ import br.com.mateus.projectREST.dtos.UserLoginDto
 import br.com.mateus.projectREST.response.Response
 import br.com.mateus.projectREST.services.USERService
 import br.com.mateus.projectREST.entities.USEREntity
-import com.fasterxml.jackson.databind.ObjectMapper
+import tools.jackson.module.kotlin.jacksonObjectMapper
 import com.google.gson.Gson
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationManager
@@ -15,9 +15,9 @@ import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import java.util.*
-import javax.servlet.FilterChain
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.FilterChain
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
 
 class JWTAuthenticationFilter: UsernamePasswordAuthenticationFilter {
@@ -33,8 +33,8 @@ class JWTAuthenticationFilter: UsernamePasswordAuthenticationFilter {
         this.user = user
     }
 
-    override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse?): Authentication? {
-            val (login, password) = ObjectMapper().readValue(request.inputStream, Credentials::class.java)
+    override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
+            val (login, password) = jacksonObjectMapper().readValue(request.inputStream, Credentials::class.java)
             try {
                 val token = UsernamePasswordAuthenticationToken(login, password)
                 return authenticationManager.authenticate(token)
@@ -43,7 +43,7 @@ class JWTAuthenticationFilter: UsernamePasswordAuthenticationFilter {
             }
     }
 
-    override fun successfulAuthentication(request: HttpServletRequest?, response: HttpServletResponse, chain: FilterChain?, authResult: Authentication) {
+    override fun successfulAuthentication(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain, authResult: Authentication) {
         val login = (authResult.principal as UserSS).login
         val responsedto: Response<UserLoginDto> = Response()
         val obj: Optional<USEREntity> = user.findUserByLogin(login!!)
@@ -75,7 +75,7 @@ class JWTAuthenticationFilter: UsernamePasswordAuthenticationFilter {
         return null
     }
 
-    override fun unsuccessfulAuthentication(request: HttpServletRequest?, response: HttpServletResponse?, failed: AuthenticationException?) {
+    override fun unsuccessfulAuthentication(request: HttpServletRequest, response: HttpServletResponse, failed: AuthenticationException) {
         val responsedto: Response<Response<Void>> = Response()
         responsedto.erros.add(failed?.message!!)
         val gson = Gson()

@@ -2,8 +2,8 @@ package br.com.mateus.projectREST.filters
 
 import org.springframework.stereotype.Component
 import java.io.IOException
-import javax.servlet.*
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.*
+import jakarta.servlet.http.HttpServletResponse
 
 
 @Component

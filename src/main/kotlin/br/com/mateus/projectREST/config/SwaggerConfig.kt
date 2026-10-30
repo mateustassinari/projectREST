@@ -1,78 +1,35 @@
 package br.com.mateus.projectREST.config
 
-import io.swagger.models.auth.In
+import io.swagger.v3.oas.models.Components
+import io.swagger.v3.oas.models.OpenAPI
+import io.swagger.v3.oas.models.info.Contact
+import io.swagger.v3.oas.models.info.Info
+import io.swagger.v3.oas.models.security.SecurityRequirement
+import io.swagger.v3.oas.models.security.SecurityScheme
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Import
-import org.springframework.http.HttpHeaders
-import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration
-import springfox.documentation.builders.PathSelectors
-import springfox.documentation.builders.RequestHandlerSelectors
-import springfox.documentation.builders.ResponseMessageBuilder
-import springfox.documentation.schema.ModelRef
-import springfox.documentation.service.*
-import springfox.documentation.spi.DocumentationType
-import springfox.documentation.spi.service.contexts.SecurityContext
-import springfox.documentation.spring.web.plugins.Docket
-import springfox.documentation.swagger.web.UiConfiguration
-import springfox.documentation.swagger.web.UiConfigurationBuilder
-import springfox.documentation.swagger2.annotations.EnableSwagger2
-import java.util.*
-
 
 @Configuration
-@EnableSwagger2
-@Import(BeanValidatorPluginsConfiguration::class)
-class SwaggerConfig {
+class OpenApiConfig {
 
     @Bean
-    fun api(): Docket {
-        return Docket(DocumentationType.SWAGGER_2)
-                .useDefaultResponseMessages(false)
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("br.com.mateus.projectREST.controllers"))
-                .paths(PathSelectors.any())
-                .build()
-                .apiInfo(apiInfo())
-                .securitySchemes(listOf(ApiKey("Token Access", HttpHeaders.AUTHORIZATION, In.HEADER.name)))
-                .securityContexts(listOf(securityContext()))
-    }
-
-
-    private fun securityContext(): SecurityContext? {
-        return SecurityContext.builder()
-                .securityReferences(defaultAuth())
-                .forPaths(PathSelectors.ant("/**"))
-                .build()
-    }
-
-    fun defaultAuth(): List<SecurityReference?>? {
-        val authorizationScope = AuthorizationScope("ADMIN", "accessEverything")
-        val authorizationScopes = arrayOfNulls<AuthorizationScope>(1)
-        authorizationScopes[0] = authorizationScope
-        return listOf(
-                SecurityReference("Token Access", authorizationScopes))
-    }
-
-    private fun apiInfo(): ApiInfo? {
-        return ApiInfo(
-                "API for REST CRUD Project",
-                "REST CRUD Project",
-                "Version 1.0",
-                "",
-                Contact("Mateus", "", "mateustassinari18@gmail.com"),
-                "",
-                "",
-                Collections.emptyList() // Vendor Extensions
+    fun openApi(): OpenAPI = OpenAPI()
+        .info(
+            Info()
+                .title("API for REST CRUD Project")
+                .description("REST CRUD Project")
+                .version("1.0")
+                .contact(Contact()
+                    .name("Mateus")
+                    .email("mateustassinari18@gmail.com"))
         )
-    }
-
-    @Bean
-    fun uiConfig(): UiConfiguration? {
-        return UiConfigurationBuilder.builder()
-                .defaultModelsExpandDepth(-1)
-                .build()
-    }
-
-
+        .addSecurityItem(SecurityRequirement().addList("Bearer Authentication"))
+        .components(
+            Components()
+                .addSecuritySchemes("Bearer Authentication",
+                    SecurityScheme()
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT"))
+        )
 }

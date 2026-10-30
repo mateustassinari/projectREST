@@ -10,8 +10,8 @@ import java.util.*
 @Service
 class UserDetailsImpl(private val user: USERService) : UserDetailsService {
 
-    override fun loadUserByUsername(login: String?): UserDetails {
-        val obj: Optional<USEREntity> = user.findUserByLogin(login!!)
+    override fun loadUserByUsername(login: String): UserDetails {
+        val obj: Optional<USEREntity> = user.findUserByLogin(login)
         return if(obj.isEmpty) {
                throw Exception("User not found")
         } else {

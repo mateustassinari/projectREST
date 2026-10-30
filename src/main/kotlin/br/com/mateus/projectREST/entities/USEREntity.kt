@@ -1,11 +1,11 @@
 package br.com.mateus.projectREST.entities
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import io.swagger.annotations.ApiModelProperty
-import javax.persistence.*
+import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.persistence.*
 
 @Entity
-@Table(name = "USER", catalog = "")
+@Table(name = "users")
 @JsonIgnoreProperties("hibernateLazyInitializer", "handler","hash","salt")
 data class USEREntity (
     @get:Id
@@ -32,11 +32,11 @@ data class USEREntity (
     var status: String? = null,
     @get:Basic
     @get:Column(name = "DS_USER_HASH", nullable = false, length = 1024)
-    @ApiModelProperty(hidden= true)
+    @Schema(hidden = true)
     var hash: String? = null,
     @get:Basic
     @get:Column(name = "DS_USER_SALT", nullable = false, length = 1024)
-    @ApiModelProperty(hidden= true)
+    @Schema(hidden = true)
     var salt: String? = null
 
 ) {
@@ -76,4 +76,3 @@ data class USEREntity (
     }
 
 }
-

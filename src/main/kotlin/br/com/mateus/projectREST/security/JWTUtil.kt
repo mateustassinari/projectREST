@@ -2,7 +2,7 @@ package br.com.mateus.projectREST.security
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
+import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.util.*
@@ -17,11 +17,12 @@ class JWTUtil {
     private val expiration: Long = 60480000000
 
     fun generateToken(username: String): String {
+        val key = Keys.hmacShaKeyFor(secret.toByteArray())
         return Jwts.builder()
-                .setSubject(username)
-                .setExpiration(Date(System.currentTimeMillis() + expiration))
-                .signWith(SignatureAlgorithm.HS512, secret.toByteArray())
-                .compact()
+            .subject(username)
+            .expiration(Date(System.currentTimeMillis() + expiration))
+            .signWith(key, Jwts.SIG.HS512)
+            .compact()
     }
 
     fun isTokenValid(token: String): Boolean {
@@ -39,15 +40,16 @@ class JWTUtil {
 
     private fun getClaimsToken(token: String): Claims? {
         return try {
-            Jwts.parser().setSigningKey(secret.toByteArray()).parseClaimsJws(token).body
+            val key = Keys.hmacShaKeyFor(secret.toByteArray())
+            Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .payload
         } catch (e: Exception) {
             null
         }
     }
 
-    fun getUserName(token: String): String? {
-        val claims = getClaimsToken(token)
-        return claims?.subject
-    }
-
+    fun getUserName(token: String): String? = getClaimsToken(token)?.subject
 }
