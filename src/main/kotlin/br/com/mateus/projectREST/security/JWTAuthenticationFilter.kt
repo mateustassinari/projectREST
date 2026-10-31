@@ -14,7 +14,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import java.util.*
+import kotlin.jvm.optionals.getOrNull
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -46,18 +46,18 @@ class JWTAuthenticationFilter: UsernamePasswordAuthenticationFilter {
     override fun successfulAuthentication(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain, authResult: Authentication) {
         val login = (authResult.principal as UserSS).login
         val responsedto: Response<UserLoginDto> = Response()
-        val obj: Optional<USEREntity> = user.findUserByLogin(login!!)
+        val obj: USEREntity? = user.findUserByLogin(login!!).getOrNull()
         val token = jwtUtil.generateToken(login)
-        if(!obj.isEmpty) {
-            if(obj.orElse(null).status != "A"){
+        if(obj != null) {
+            if(obj.status != "A"){
                 response.addHeader("Content-Type","application/json; charset=utf-8")
                 response.status = HttpServletResponse.SC_FORBIDDEN
-                response.writer?.write("{ \"erros\": [ \"This user is inactive!\" ] }")
+                response.writer?.write("{ \"errors\": [ \"This user is inactive!\" ] }")
                 response.writer?.flush()
                 response.writer?.close()
                 return
             }else {
-                responsedto.data = converterUsuarioDto(obj.orElse(null), token)
+                responsedto.data = converterUsuarioDto(obj, token)
             }
         }
         val gson = Gson()
@@ -77,14 +77,14 @@ class JWTAuthenticationFilter: UsernamePasswordAuthenticationFilter {
 
     override fun unsuccessfulAuthentication(request: HttpServletRequest, response: HttpServletResponse, failed: AuthenticationException) {
         val responsedto: Response<Response<Void>> = Response()
-        responsedto.erros.add(failed?.message!!)
+        responsedto.errors.add(failed.message!!)
         val gson = Gson()
         val json: String = gson.toJson(responsedto)
-        response?.addHeader("Content-Type","application/json; charset=utf-8")
-        response?.status = HttpServletResponse.SC_NOT_FOUND
-        response?.writer?.write(json)
-        response?.writer?.flush()
-        response?.writer?.close()
+        response.addHeader("Content-Type","application/json; charset=utf-8")
+        response.status = HttpServletResponse.SC_NOT_FOUND
+        response.writer?.write(json)
+        response.writer?.flush()
+        response.writer?.close()
     }
 
 }

@@ -4,10 +4,7 @@ import br.com.mateus.projectREST.dtos.LoginDto
 import br.com.mateus.projectREST.dtos.PasswDto
 import br.com.mateus.projectREST.dtos.UserLoginDto
 import br.com.mateus.projectREST.dtos.ValidTokenDto
-import br.com.mateus.projectREST.security.JWTUtil
-import br.com.mateus.projectREST.security.UserSS
 import br.com.mateus.projectREST.services.impl.AuthService
-import br.com.mateus.projectREST.services.impl.UserService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -19,7 +16,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/auth")
-class AuthController(val jwtUtil : JWTUtil, val authService: AuthService) {
+class AuthController(val authService: AuthService) {
 
     @Operation(summary = "Refresh on authentication token before expiring")
     @ApiResponses(value = [
@@ -28,17 +25,9 @@ class AuthController(val jwtUtil : JWTUtil, val authService: AuthService) {
         ApiResponse(responseCode = "403", description = "Inactive User"),
         ApiResponse(responseCode = "500", description = "Unexpected error")])
     @RequestMapping(value = ["/refresh_token"], method = [RequestMethod.POST])
-    fun refreshToken(): ResponseEntity<ValidTokenDto>? {
-        val response: ValidTokenDto?
-        val user: UserSS? = UserService().authenticated()
-        val token: String = jwtUtil.generateToken(user!!.username)
-
-        return if(authService.validLogin(user.login)) {
-            response = authService.convertValidTokenDto(token)
-            ResponseEntity.status(HttpStatus.OK).body(response)
-        }else{
-            ResponseEntity.status(HttpStatus.FORBIDDEN).body(null)
-        }
+    fun refreshToken(): ResponseEntity<ValidTokenDto> {
+        val response = authService.refreshToken() ?: return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+        return ResponseEntity.ok(response)
     }
 
     @Operation(summary = "Save user password")

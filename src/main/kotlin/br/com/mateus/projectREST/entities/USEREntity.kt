@@ -32,11 +32,11 @@ data class USEREntity (
     var status: String? = null,
     @get:Basic
     @get:Column(name = "DS_USER_HASH", nullable = false, length = 1024)
-    @Schema(hidden = true)
+    @get:Schema(hidden = true)
     var hash: String? = null,
     @get:Basic
     @get:Column(name = "DS_USER_SALT", nullable = false, length = 1024)
-    @Schema(hidden = true)
+    @get:Schema(hidden = true)
     var salt: String? = null
 
 ) {

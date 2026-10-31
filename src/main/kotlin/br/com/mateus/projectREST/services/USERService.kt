@@ -1,6 +1,6 @@
 package br.com.mateus.projectREST.services
 
-import br.com.mateus.projectREST.dtos.NewUSERDto
+import br.com.mateus.projectREST.dtos.ReturnUSERDto
 import br.com.mateus.projectREST.dtos.USERDto
 import br.com.mateus.projectREST.dtos.USERInsDto
 import br.com.mateus.projectREST.dtos.USERUpdDto
@@ -12,8 +12,6 @@ interface USERService {
     fun findUserById(id: Int): Optional<USEREntity>
 
     fun findUserByLogin(login: String): Optional<USEREntity>
-
-    fun findUserByLoginToken(login: String): Optional<USEREntity>
 
     fun findUserByName(name: String): Optional<USEREntity>
 
@@ -29,10 +27,14 @@ interface USERService {
 
     fun update(user: USEREntity): USEREntity
 
-    fun convertUSERDto(obj: USEREntity): USERDto?
+    fun findByLogin(login: String): USERDto
 
-    fun convertDtoToUSER(USERUpdDto: USERUpdDto): USEREntity
+    fun findById(id: Int): USERDto
 
-    fun convertDtoToNewUSER(USERDto: USERInsDto): NewUSERDto
+    fun register(userDto: USERInsDto): ReturnUSERDto
+
+    fun updateUser(id: Int, userDto: USERUpdDto)
+
+    fun deleteUser(id: Int)
 
 }

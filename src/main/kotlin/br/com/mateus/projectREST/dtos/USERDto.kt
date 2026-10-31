@@ -14,7 +14,6 @@ data class USERDto (
         var login: String? = null,
 
         @get:NotBlank(message="Cpf cannot be empty")
-        @get:CPF(message="Cpf invalid")
         var cpf: String? = null,
 
         @get:NotBlank(message="Telephone cannot be empty")

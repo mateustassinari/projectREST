@@ -4,8 +4,6 @@ import java.util.*
 
 class NewPassword {
 
-    private val rand: Random = Random()
-
     fun newPassword(): String {
         return getRandomPassword()
     }
@@ -21,7 +19,7 @@ class NewPassword {
             n +=random.nextInt(9)
         }
         p += n
-        return p.toString()
+        return p
     }
 
     private fun firstUpperCase(lWord: String): String {
